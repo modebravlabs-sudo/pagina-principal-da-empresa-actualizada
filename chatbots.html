@@ -1,308 +1,206 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat modeBRAVLabs</title>
-<style>
-    /* Estilo do container */
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: #f0f2f5;
-    }
-
-    .chat-container {
-        width: 100%;
-        max-width: 400px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        background: blue;
-    }
-
-    #messages {
-        flex: 1;
-        padding: 15px;
-        overflow-y: auto;
-        background: #e5e5e5;
-    }
-
-    .message {
-        margin-bottom: 10px;
-        padding: 10px 15px;
-        border-radius: 20px;
-        max-width: 80%;
-        word-wrap: break-word;
-    }
-
-    .message.user {
-        background: #4a90e2;
-        color: #fff;
-        align-self: flex-end;
-        border-bottom-right-radius: 0;
-    }
-
-    .message.bot {
-        background: #fff;
-        color: #333;
-        align-self: flex-start;
-        border-bottom-left-radius: 0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .input-container {
-        display: flex;
-        border-top: 1px solid #ccc;
-        padding: 10px;
-        background: #fafafa;
-    }
-
-    #input {
-        flex: 1;
-        padding: 10px 15px;
-        border: 1px solid #ccc;
-        border-radius: 25px;
-        outline: none;
-        font-size: 16px;
-        margin-right: 10px;
-    }
-
-    #sendBtn {
-        padding: 10px 20px;
-        border: none;
-        background: #4a90e2;
-        color: #fff;
-        font-size: 16px;
-        border-radius: 25px;
-        cursor: pointer;
-        transition: background 0.3s;
-    }
-
-    #sendBtn:hover {
-        background: #357ab8;
-    }
-
-    /* Scroll automático */
-    #messages::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    #messages::-webkit-scrollbar-thumb {
-        background: rgba(0,0,0,0.2);
-        border-radius: 3px;
-    }
-
-    @media (max-width: 500px) {
-        .chat-container {
-            height: 100vh;
-            border-radius: 0;
-        }
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat modeBRAVLabs</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f2f5;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 450px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #fff; /* Removido o azul sólido para ver o chat */
+            border: 1px solid #ddd;
+        }
+
+        /* Cabeçalho simples */
+        .chat-header {
+            background: #4a90e2;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 85%;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.user {
+            background: #4a90e2;
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.bot {
+            background: #e1e1e1;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        #input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        #sendBtn {
+            margin-left: 10px;
+            padding: 0 20px;
+            border: none;
+            background: #4a90e2;
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #sendBtn:hover { background: #357ab8; }
+
+        @media (max-width: 500px) {
+            .chat-container { height: 100vh; border-radius: 0; }
+        }
+    </style>
+
 <div class="chat-container">
+    <div class="chat-header">modeBRAVLabs Assistant</div>
     <div id="messages"></div>
     <div class="input-container">
-        <input id="input" type="text" placeholder="Digite sua mensagem..." />
+        <input id="input" type="text" placeholder="Digite sua dúvida..." autocomplete="off" />
         <button id="sendBtn">Enviar</button>
     </div>
 </div>
 
 <script>
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
+const messagesDiv = document.getElementById("messages");
+const inputField = document.getElementById("input");
 const sendBtn = document.getElementById("sendBtn");
 
-// Mensagem de boas-vindas
-window.addEventListener("load", () => {
-    const welcomeText = `Bem-vindo ao chatbot modeBRAVLabs!
-Aqui você pode encontrar:
-- Informações sobre Henrique João Muianga
-- Dicas de desenvolvimento pessoal e produtividade
-- Como gerir ansiedade e parar de se preocupar com pessoas
-- Entender depressão e suas causas
-- Conselhos para se tornar mais forte como homem ou mulher
-Digite sua dúvida ou assunto que quer explorar.`;
-    addMessage(welcomeText, "bot");
-});
-
-// Enviar mensagem
-function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
-
-    addMessage(text, "user");
-    input.value = "";
-
-    setTimeout(() => {
-        botReply(text);
-    }, 800);
+// 1. Funções de Utilidade
+function normalizeText(text) {
+    return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// Adiciona mensagem no chat
+function matchKeywords(text, keywords) {
+    return keywords.some(keyword => text.includes(normalizeText(keyword)));
+}
+
 function addMessage(text, sender) {
     const div = document.createElement("div");
     div.className = `message ${sender}`;
     div.innerText = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-// Lógica de respostas do bot
-function botReply(text) {
-    let reply = "Não entendi. Pode reformular?";
+// 2. Lógica de Resposta
+function botReply(userText) {
+    const cleanText = normalizeText(userText);
+    let reply = "";
 
-    const lowerText = text.toLowerCase();
-
-   // Saudações e Identidade
-// Função para normalizar texto (minúsculas + sem acentos)
-function normalizeText(text) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, ""); // remove acentos
-}
-
-let lowerText = normalizeText(userInput);
-
-// Função auxiliar para verificar se alguma palavra-chave aparece
-function matchKeywords(text, keywords) {
-  return keywords.some(keyword => text.includes(keyword));
-}
-
-// Saudações e Identidade
-if (matchKeywords(lowerText, ["oi", "ola", "olá", "bom dia", "boa tarde", "boa noite"])) 
-  reply = "Olá! Eu sou o assistente da modeBRAVLabs. Sobre o que você quer conversar hoje?";
-
-if (matchKeywords(lowerText, ["modebravlabs", "mode brav labs"])) 
-  reply = "modeBRAVLabs é uma empresa dedicada ao uso da tecnologia para melhorar foco, evolução pessoal, produtividade e persuasão.";
-
-if (matchKeywords(lowerText, ["henrique joao muianga", "ceo", "fundador"])) 
-  reply = "Henrique João Muianga é o CEO da modeBRAVLabs, liderando projetos que unem tecnologia e desenvolvimento pessoal.";
-
-// Tecnologia
-if (matchKeywords(lowerText, ["python", "py"])) 
-  reply = "Python é excelente para automação, IA e desenvolvimento web.";
-
-if (matchKeywords(lowerText, ["dev_attach", "desenvolvimento web", "web dev", "programacao web"])) 
-  reply = "Desenvolvimento web envolve HTML, CSS, JS e frameworks modernos.";
-
-if (matchKeywords(lowerText, ["ia", "inteligencia artificial", "machine learning", "aprendizado de maquina"])) 
-  reply = "Inteligência Artificial está revolucionando o mundo.";
-
-// Saúde Mental
-if (matchKeywords(lowerText, ["ansiedade", "ansioso", "crise de ansiedade"])) 
-  reply = "Gerir a ansiedade envolve técnicas de respiração, mindfulness, exercícios físicos e manter uma rotina equilibrada.";
-
-if (matchKeywords(lowerText, ["depressao", "depressivo", "tristeza profunda"])) 
-  reply = "Depressão é uma condição mental complexa que pode surgir devido a fatores genéticos, bioquímicos, psicológicos ou sociais. Procurar ajuda profissional é essencial.";
-
-if (matchKeywords(lowerText, ["saude mental", "bem estar emocional"])) 
-  reply = "Cuidar da saúde mental envolve equilíbrio entre trabalho, descanso, relações sociais e autocuidado.";
-
-if (matchKeywords(lowerText, ["terapia", "psicologo", "psicoterapia"])) 
-  reply = "A terapia é um espaço seguro para compreender emoções, desenvolver estratégias e fortalecer o bem-estar.";
-
-if (matchKeywords(lowerText, ["mindfulness", "atencao plena", "meditacao"])) 
-  reply = "Mindfulness é a prática de atenção plena, que ajuda a reduzir ansiedade e aumentar foco.";
-
-// Desenvolvimento Pessoal
-if (matchKeywords(lowerText, ["autoconhecimento", "conhecer a si mesmo"])) 
-  reply = "Autoconhecimento é a base do desenvolvimento pessoal. Conhecer seus valores e limites fortalece sua identidade.";
-
-if (matchKeywords(lowerText, ["disciplina", "ser disciplinado"])) 
-  reply = "Disciplina é fazer o que precisa ser feito mesmo quando não há motivação. É o alicerce da evolução.";
-
-if (matchKeywords(lowerText, ["resiliencia", "resiliente"])) 
-  reply = "Resiliência é a capacidade de se recuperar diante das dificuldades e aprender com elas.";
-
-if (matchKeywords(lowerText, ["ser forte", "forca emocional", "homem forte", "mulher forte"])) 
-  reply = "Ser forte envolve desenvolver resiliência, inteligência emocional, disciplina e cuidar da mente e corpo.";
-
-if (matchKeywords(lowerText, ["proposito", "sentido da vida"])) 
-  reply = "Ter um propósito claro dá direção e sentido à vida, fortalecendo motivação e resiliência.";
-
-// Produtividade
-if (matchKeywords(lowerText, ["produtividade", "produtivo", "ser produtivo", "mais produtivo"])) 
-  reply = "Produtividade não é fazer mais, mas sim fazer melhor. Foque em prioridades e elimine distrações.";
-
-if (matchKeywords(lowerText, ["pomodoro", "tecnica pomodoro"])) 
-  reply = "A técnica Pomodoro consiste em ciclos de 25 minutos de foco seguidos de 5 minutos de pausa.";
-
-if (matchKeywords(lowerText, ["organizacao", "organizado", "planejamento"])) 
-  reply = "Organização é chave para produtividade. Use listas, calendários e defina prioridades.";
-
-if (matchKeywords(lowerText, ["rotina matinal", "manha produtiva"])) 
-  reply = "Uma rotina matinal estruturada aumenta energia e foco para o resto do dia.";
-
-// Persuasão e Comunicação
-if (matchKeywords(lowerText, ["persuasao", "convencer", "influenciar"])) 
-  reply = "Persuasão é a arte de comunicar ideias de forma clara e convincente, com empatia e lógica.";
-
-if (matchKeywords(lowerText, ["comunicacao eficaz", "boa comunicacao"])) 
-  reply = "Comunicação eficaz envolve clareza, empatia e escuta ativa.";
-
-if (matchKeywords(lowerText, ["linguagem corporal", "postura corporal"])) 
-  reply = "A linguagem corporal transmite confiança e credibilidade. Mantenha postura aberta e contato visual.";
-
-if (matchKeywords(lowerText, ["argumentacao", "argumentar"])) 
-  reply = "Argumentação sólida combina lógica, emoção e credibilidade para convencer de forma ética.";
-
-// Procrastinação
-if (matchKeywords(lowerText, ["procrastinacao", "adiar tarefas", "deixar para depois"])) 
-  reply = "Procrastinação é adiar o que precisa ser feito. Divida tarefas em etapas menores e estabeleça prazos curtos.";
-
-if (matchKeywords(lowerText, ["procrastinacao academica", "adiar estudos"])) 
-  reply = "Procrastinação acadêmica pode ser vencida com planejamento, metas curtas e recompensas.";
-
-if (matchKeywords(lowerText, ["procrastinacao no trabalho", "adiar trabalho"])) 
-  reply = "No trabalho, procrastinação gera estresse. Divida tarefas e elimine distrações digitais.";
-
-// Pornografia
-if (matchKeywords(lowerText, ["pornografia", "porno", "conteudo adulto"])) 
-  reply = "O consumo excessivo de pornografia pode gerar dependência e distorcer expectativas sobre relacionamentos.";
-
-if (matchKeywords(lowerText, ["vicio em pornografia", "dependencia pornografia"])) 
-  reply = "O vício em pornografia pode afetar relacionamentos e autoestima. Buscar equilíbrio é essencial.";
-
-if (matchKeywords(lowerText, ["superar pornografia", "parar pornografia"])) 
-  reply = "Superar o consumo excessivo envolve autocontrole, apoio psicológico e novos hábitos saudáveis.";
-
-// Opinião Alheia
-if (matchKeywords(lowerText, ["opiniao dos outros", "o que os outros pensam"])) 
-  reply = "A opinião dos outros não define seu valor. Foque em seus objetivos e pratique autoconfiança.";
-
-if (matchKeywords(lowerText, ["criticas", "receber criticas"])) 
-  reply = "Críticas podem ser construtivas ou destrutivas. Aprenda a filtrar e usar apenas o que agrega.";
-
-if (matchKeywords(lowerText, ["comparacao", "comparar-se"])) 
-  reply = "Comparar-se constantemente gera insegurança. Cada pessoa tem seu próprio ritmo de evolução.";
-
-if (matchKeywords(lowerText, ["preocupar com pessoas", "importar-se com opiniao"])) 
-  reply = "Para parar de se preocupar com a opinião dos outros, concentre-se em seus objetivos e estabeleça limites saudáveis.";
+    // Saudações
+    if (matchKeywords(cleanText, ["oi", "ola", "bom dia", "boa tarde", "boa noite"])) {
+        reply = "Olá! Eu sou o assistente da modeBRAVLabs. Como posso te ajudar hoje?";
+    }
+    else if (matchKeywords(cleanText, ["modebravlabs", "mode brav labs"])) {
+        reply = "A modeBRAVLabs foca em tecnologia para evolução pessoal, produtividade e persuasão.";
+    }
+    else if (matchKeywords(cleanText, ["henrique joao muianga", "ceo", "fundador"])) {
+        reply = "Henrique João Muianga é o CEO da modeBRAVLabs, liderando projetos de tecnologia e desenvolvimento.";
+    }
+    // Saúde Mental
+    else if (matchKeywords(cleanText, ["ansiedade", "ansioso", "preocupado"])) {
+        reply = "Gerir a ansiedade envolve respiração, mindfulness e foco no presente. Como você está se sentindo agora?";
+    }
+    else if (matchKeywords(cleanText, ["depressao", "tristeza"])) {
+        reply = "A depressão é séria. Além de buscar hábitos saudáveis, é fundamental conversar com um profissional de saúde.";
+    }
+    // Desenvolvimento e Produtividade
+    else if (matchKeywords(cleanText, ["disciplina", "foco", "vontade"])) {
+        reply = "Disciplina é fazer o que precisa ser feito. Comece pequeno e seja constante.";
+    }
+    else if (matchKeywords(cleanText, ["produtividade", "pomodoro", "organizar"])) {
+        reply = "Para ser produtivo, elimine distrações e foque em uma tarefa por vez. Já tentou a técnica Pomodoro?";
+    }
+    else if (matchKeywords(cleanText, ["pornografia", "vicio", "porno"])) {
+        reply = "Superar vícios exige novos hábitos e entender os gatilhos. Foque na sua evolução pessoal.";
+    }
+    else if (matchKeywords(cleanText, ["opiniao", "critica", "pessoas"])) {
+        reply = "A opinião alheia não define você. Foque nos seus valores e no seu progresso.";
+    }
+    // Padrão
+    else {
+        reply = "Interessante... pode me falar mais sobre isso ou tentar outro assunto como produtividade ou saúde mental?";
+    }
 
     addMessage(reply, "bot");
 }
 
-// Envia mensagem ao apertar Enter
-input.addEventListener("keypress", function(e) {
-    if (e.key === "Enter") sendMessage();
+// 3. Eventos
+function handleSend() {
+    const text = inputField.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    inputField.value = "";
+
+    setTimeout(() => botReply(text), 600);
+}
+
+sendBtn.addEventListener("click", handleSend);
+inputField.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") handleSend();
 });
 
-// Envia mensagem ao clicar no botão
-sendBtn.addEventListener("click", sendMessage);
+// Mensagem Inicial
+window.onload = () => {
+    addMessage("Bem-vindo ao modeBRAVLabs! Digite algo sobre produtividade, saúde mental ou desenvolvimento pessoal para começarmos.", "bot");
+};
 </script>
+
 </body>
 </html>
-
-
-
